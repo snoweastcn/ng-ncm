@@ -1,0 +1,11 @@
+<div class="nc-slider"
+     #ncSlider
+     [class.nc-slider-vertical]="ncVertical">
+  <app-nc-slider-track [ncVertical]="ncVertical"
+                       [ncLength]="bufferOffset"
+                       [ncBuffer]="true"></app-nc-slider-track>
+  <app-nc-slider-track [ncVertical]="ncVertical"
+                       [ncLength]="offset"></app-nc-slider-track>
+  <app-nc-slider-handle [ncVertical]="ncVertical"
+                        [ncOffset]="offset"></app-nc-slider-handle>
+</div>

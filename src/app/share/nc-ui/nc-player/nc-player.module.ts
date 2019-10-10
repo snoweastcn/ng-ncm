@@ -1,13 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NcPlayerComponent } from './nc-player.component';
+import { NcSliderModule } from '../nc-slider/nc-slider.module';
+import { FormatTimePipe } from '../../pipes/format-time.pipe';
 
 
 
 @NgModule({
-  declarations: [NcPlayerComponent],
+  declarations: [NcPlayerComponent, FormatTimePipe],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    NcSliderModule
   ],
   exports: [
     NcPlayerComponent

@@ -8,6 +8,7 @@ import { NZ_I18N, zh_CN } from 'ng-zorro-antd';
 import { ServicesModule } from '../services/services.module';
 import { PagesModule } from '../pages/pages.module';
 import { ShareModule } from '../share/share.module';
+import { AppStoreModule } from '../store';
 
 
 registerLocaleData(zh);
@@ -20,7 +21,8 @@ registerLocaleData(zh);
     BrowserAnimationsModule,
     ServicesModule,
     PagesModule,
-    ShareModule
+    ShareModule,
+    AppStoreModule
   ],
   exports: [
     ShareModule
