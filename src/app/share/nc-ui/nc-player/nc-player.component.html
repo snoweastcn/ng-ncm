@@ -1,4 +1,5 @@
-<div class="m-player">
+<div class="m-player"
+     (click)="selfClick = true">
   <div class="lock">
     <div class="left"><i></i></div>
   </div>
@@ -6,9 +7,13 @@
   <div class="container">
     <div class="wrap">
       <div class="btns">
-        <i class="prev" (click)="onPrev(currentIndex - 1)"></i>
-        <i class="toggle" [class.playing]="playing" (click)="onToggle()"></i>
-        <i class="next" (click)="onNext(currentIndex + 1)"></i>
+        <i class="prev"
+           (click)="onPrev(currentIndex - 1)"></i>
+        <i class="toggle"
+           [class.playing]="playing"
+           (click)="onToggle()"></i>
+        <i class="next"
+           (click)="onNext(currentIndex + 1)"></i>
       </div>
       <div class="head">
         <img [src]="picUrl"
@@ -28,7 +33,8 @@
         <div class="bar">
           <div class="slider-wrap">
             <app-nc-slider [(ngModel)]="percent"
-                           [bufferOffset]="bufferPercent" (ncOnAfterChange)="onPercentChange($event)"></app-nc-slider>
+                           [bufferOffset]="bufferPercent"
+                           (ncOnAfterChange)="onPercentChange($event)"></app-nc-slider>
           </div>
           <span class="time">
             <em>{{currentTime | formatTime}}</em>&nbsp;/&nbsp;{{duration | formatTime}}
@@ -44,21 +50,37 @@
       </div>
       <div class="ctrl">
         <i class="volume"
-           title="音量"></i>
-        <i class="loop"
-           title="循环"></i>
-        <p class="open">
+           title="音量"
+           (click)="toggleVolPanel($event)"></i>
+        <i [ngClass]="currentMode.type"
+           [title]="currentMode.label"
+           (click)="changeMode()"></i>
+        <p class="open"
+           (click)="toggleListPanel()">
           <span></span>
         </p>
 
-        <div class="control-vol">
-          <app-nc-slider [ncVertical]="true"></app-nc-slider>
+        <div class="control-vol"
+             [hidden]="!showVolumePanel">
+          <app-nc-slider [ncVertical]="true"
+                         [(ngModel)]="volume"
+                         (ngModelChange)="onVolumeChange()"></app-nc-slider>
         </div>
       </div>
+
+      <app-nc-player-panel [songList]="songList"
+                           [currentSong]="currentSong"
+                           [currentIndex]="currentIndex"
+                           [show]="showListPanel"
+                           (changeSong)="onChangeSong($event)"
+                           (handleClose)="showListPanel = false"></app-nc-player-panel>
+
     </div>
   </div>
+
   <audio #audio
          [src]="currentSong?.url"
          (canplay)="onCanPlay()"
-         (timeupdate)="onTimeUptate($event)"></audio>
+         (timeupdate)="onTimeUptate($event)"
+         (ended)="onEnded()"></audio>
 </div>
