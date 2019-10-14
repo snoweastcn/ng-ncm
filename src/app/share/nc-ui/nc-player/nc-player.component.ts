@@ -4,10 +4,13 @@ import { AppStoreModule } from 'src/app/store';
 import { getSongList, getPlayList, getCurrentIndex, getPlayMode, getCurrentSong } from 'src/app/store/selectors/player.selector';
 import { Song } from 'src/app/services/data-types/common.types';
 import { PlayMode } from './player-type';
-import { SetCurrentIndex, SetPlayMode, SetPlayList } from 'src/app/store/actions/player.action';
+import { SetCurrentIndex, SetPlayMode, SetPlayList, SetSongList } from 'src/app/store/actions/player.action';
 import { Subscription, fromEvent } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
-import { shuffle } from 'src/app/utils/array';
+import { shuffle, findIndex } from 'src/app/utils/array';
+import { NcPlayerPanelComponent } from './nc-player-panel/nc-player-panel.component';
+import { NzModalService } from 'ng-zorro-antd';
+import { BatchActionsService } from 'src/app/store/batch-actions.service';
 
 const modeTypes: PlayMode[] = [
   { type: 'loop', label: '循环' },
@@ -22,6 +25,7 @@ const modeTypes: PlayMode[] = [
 })
 export class NcPlayerComponent implements OnInit, AfterViewInit {
   @ViewChild('audio', { static: true }) private audio: ElementRef;
+  @ViewChild(NcPlayerPanelComponent, { static: false }) private playPanel: NcPlayerPanelComponent;
   private audioEl: HTMLAudioElement;
   percent = 0;
   bufferPercent = 0;
@@ -47,8 +51,8 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
   // 是否显示播放列表控制面板
   showListPanel = false;
 
-  // 是否点击音量面板本身
-  selfClick = false;
+  // 是否绑定 document click 事件
+  bingFlag = false;
 
   private winClick: Subscription;
 
@@ -60,7 +64,9 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
 
   constructor(
     private store$: Store<AppStoreModule>,
-    @Inject(DOCUMENT) private doc: Document
+    @Inject(DOCUMENT) private doc: Document,
+    private nzModalServe: NzModalService,
+    private batchActionsServe: BatchActionsService
   ) {
     const appStore$ = this.store$.pipe(select('player'));
 
@@ -108,9 +114,9 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
       let list = this.songList.slice();
       if (playMode.type === 'random') {
         list = shuffle(this.songList);
-        this.updateCurrentIndex(list, this.currentSong);
-        this.store$.dispatch(SetPlayList({ playList: list }));
       }
+      this.updateCurrentIndex(list, this.currentSong);
+      this.store$.dispatch(SetPlayList({ playList: list }));
     }
   }
 
@@ -122,7 +128,7 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
   }
 
   private updateCurrentIndex(list: Song[], song: Song) {
-    const newIndex = list.findIndex(item => item.id === song.id);
+    const newIndex = findIndex(list, song);
     this.store$.dispatch(SetCurrentIndex({ currentIndex: newIndex }));
   }
 
@@ -140,31 +146,7 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
 
   private togglePanel(type: string) {
     this[type] = !this[type];
-    if (this.showVolumePanel || this.showListPanel) {
-      this.bindDocumentClickListener();
-    } else {
-      this.unBindDocumentClickListener();
-    }
-  }
-
-  private bindDocumentClickListener() {
-    if (!this.winClick) {
-      this.winClick = fromEvent(this.doc, 'click').subscribe(() => {
-        if (!this.selfClick) { // 点击了播放器以外的部分
-          this.showVolumePanel = false;
-          this.showListPanel = false;
-          this.unBindDocumentClickListener();
-        }
-        this.selfClick = false;
-      });
-    }
-  }
-
-  private unBindDocumentClickListener() {
-    if (this.winClick) {
-      this.winClick.unsubscribe();
-      this.winClick = null;
-    }
+    this.bingFlag = this.showVolumePanel || this.showListPanel;
   }
 
   // 改变播放模式
@@ -176,7 +158,11 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
   // 播放进度
   onPercentChange(per: number) {
     if (this.currentSong) {
-      this.audioEl.currentTime = this.duration * (per / 100);
+      const currentTime = this.duration * (per / 100);
+      this.audioEl.currentTime = currentTime;
+      if (this.playPanel) {
+        this.playPanel.seekLyric(currentTime * 1000);
+      }
     }
   }
 
@@ -213,6 +199,9 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
   private loop() {
     this.audioEl.currentTime = 0;
     this.play();
+    if (this.playPanel) {
+      this.playPanel.seekLyric(0);
+    }
   }
 
   private updateIndex(newIndex: number) {
@@ -276,6 +265,27 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
 
   get picUrl(): string {
     return this.currentSong ? this.currentSong.al.picUrl : 'http://s4.music.126.net/style/web2/img/default/default_album.jpg';
+  }
+
+  // 删除歌曲
+  onDeleteSong(song: Song) {
+    this.batchActionsServe.deleteSong(song);
+  }
+
+  // 清空歌曲
+  onClearSongList() {
+    this.nzModalServe.confirm({
+      nzTitle: '确认清空列表？',
+      nzOnOk: () => {
+        this.batchActionsServe.clearSongList();
+      }
+    });
+  }
+
+  onClickOutSide() {
+    this.showVolumePanel = false;
+    this.showListPanel = false;
+    this.bingFlag = false;
   }
 
 }

@@ -28,7 +28,9 @@
                 <a>热门推荐</a>
               </h2>
               <nav>
-                <a *ngFor="let hotTag of hotTags">{{hotTag.name}}</a>
+                <a *ngFor="let hotTag of hotTags"
+                   routerLink="/sheet"
+                   [queryParams]="{cat: hotTag.name}">{{hotTag.name}}</a>
               </nav>
             </div>
             <a>
@@ -43,7 +45,8 @@
               <app-single-sheet class="sheet-item"
                                 *ngFor="let songSheet of songSheetList"
                                 [sheet]="songSheet"
-                                (toPlay)="onPlaySheet($event)"></app-single-sheet>
+                                (toPlay)="onPlaySheet($event)"
+                                (click)="toInfo(songSheet.id)"></app-single-sheet>
             </div>
           </div>
         </div>

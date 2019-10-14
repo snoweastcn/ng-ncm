@@ -4,35 +4,49 @@
       <div class="wrap">
         <div class="left">
           <h1>Music</h1>
-          <ul nz-menu nzTheme="dark" nzMode="horizontal">
-            <li nz-menu-item>发现</li>
-            <li nz-menu-item>歌单</li>
+          <ul nz-menu
+              nzTheme="dark"
+              nzMode="horizontal">
+            <li nz-menu-item
+                *ngFor="let item of menu"
+                [routerLink]="item.path">{{item.label}}</li>
           </ul>
-        </div>
+        </div>L
         <div class="right">
           <div class="search">
             <nz-input-group [nzSuffix]="suffixIconSearch">
-              <input type="text" nz-input placeholder="歌单/歌手/歌曲" />
+              <input type="text"
+                     nz-input
+                     placeholder="歌单/歌手/歌曲" />
             </nz-input-group>
             <ng-template #suffixIconSearch>
-              <i nz-icon nzType="search"></i>
+              <i nz-icon
+                 nzType="search"></i>
             </ng-template>
           </div>
           <div class="member">
             <div class="no-login">
-              <ul nz-menu nzTheme="dark" nzMode="horizontal">
+              <ul nz-menu
+                  nzTheme="dark"
+                  nzMode="horizontal">
                 <li nz-submenu>
                   <div title>
                     <span>登录</span>
-                    <i nz-icon nzType="down" nzTheme="outline"></i>
+                    <i nz-icon
+                       nzType="down"
+                       nzTheme="outline"></i>
                   </div>
                   <ul>
                     <li nz-menu-item>
-                      <i nz-icon nzType="mobile" nzTheme="outline"></i>
+                      <i nz-icon
+                         nzType="mobile"
+                         nzTheme="outline"></i>
                       手机登录
                     </li>
                     <li nz-menu-item>
-                      <i nz-icon nzType="user-add" nzTheme="outline"></i>
+                      <i nz-icon
+                         nzType="user-add"
+                         nzTheme="outline"></i>
                       注册
                     </li>
                   </ul>

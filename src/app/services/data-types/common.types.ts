@@ -41,6 +41,25 @@ export interface SongSheet {
   name: string;
   plauCount: number;
   picUrl: string;
+  coverImgUrl: string;
   tracks: Song[];
+  tags: string[];
+  createTime: number;
+  creator: { nikname: string; avatarUrl: string };
+  description: string;
+  subscribedCount: number;
+  shareCount: number;
+  commentCount: number;
+  subscribed: boolean;
+}
+// 歌词
+export interface Lyric {
+  lyric: string;
+  tlyric: string;
+}
+// 歌单列表
+export interface SheetList {
+  playlists: SongSheet[];
+  total: number;
 }
 

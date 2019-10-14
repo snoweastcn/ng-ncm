@@ -1,5 +1,7 @@
 <div class="m-player"
-     (click)="selfClick = true">
+     appClickoutside
+     (clickOutSide)="onClickOutSide()"
+     [bingFlag]="bingFlag">
   <div class="lock">
     <div class="left"><i></i></div>
   </div>
@@ -64,16 +66,18 @@
              [hidden]="!showVolumePanel">
           <app-nc-slider [ncVertical]="true"
                          [(ngModel)]="volume"
-                         (ngModelChange)="onVolumeChange()"></app-nc-slider>
+                         (ngModelChange)="onVolumeChange($event)"></app-nc-slider>
         </div>
       </div>
 
       <app-nc-player-panel [songList]="songList"
                            [currentSong]="currentSong"
-                           [currentIndex]="currentIndex"
+                           [playing]="playing"
                            [show]="showListPanel"
                            (changeSong)="onChangeSong($event)"
-                           (handleClose)="showListPanel = false"></app-nc-player-panel>
+                           (handleClose)="showListPanel = false"
+                           (deleteSong)="onDeleteSong($event)"
+                           (clearSongList)="onClearSongList()"></app-nc-player-panel>
 
     </div>
   </div>

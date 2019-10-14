@@ -6,18 +6,27 @@ import { NcSliderModule } from '../nc-slider/nc-slider.module';
 import { FormatTimePipe } from '../../pipes/format-time.pipe';
 import { NcPlayerPanelComponent } from './nc-player-panel/nc-player-panel.component';
 import { NcScrollComponent } from './nc-scroll/nc-scroll.component';
+import { ClickoutsideDirective } from '../../directives/clickoutside.directive';
 
 
 
 @NgModule({
-  declarations: [NcPlayerComponent, FormatTimePipe, NcPlayerPanelComponent, NcScrollComponent],
+  declarations: [
+    NcPlayerComponent,
+    FormatTimePipe,
+    NcPlayerPanelComponent,
+    NcScrollComponent,
+    ClickoutsideDirective
+  ],
   imports: [
     CommonModule,
     FormsModule,
     NcSliderModule
   ],
   exports: [
-    NcPlayerComponent
+    NcPlayerComponent,
+    ClickoutsideDirective,
+    FormatTimePipe
   ]
 })
 export class NcPlayerModule { }

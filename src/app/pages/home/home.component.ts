@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Banner, HotTag, SongSheet, Singer } from 'src/app/services/data-types/common.types';
 import { NzCarouselComponent } from 'ng-zorro-antd';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs/internal/operators';
 import { SheetService } from 'src/app/services/sheet.service';
-import { AppStoreModule } from 'src/app/store';
-import { SetSongList, SetPlayList, SetCurrentIndex } from 'src/app/store/actions/player.action';
-import { Store } from '@ngrx/store';
+import { PlayState } from 'src/app/store/reducers/player.reducer';
+import { BatchActionsService } from 'src/app/store/batch-actions.service';
 
 @Component({
   selector: 'app-home',
@@ -24,8 +23,9 @@ export class HomeComponent implements OnInit {
   @ViewChild(NzCarouselComponent, { static: true }) private nzCarousel: NzCarouselComponent;
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private sheetServe: SheetService,
-    private store$: Store<AppStoreModule>
+    private batchActionsServe: BatchActionsService
   ) {
     this.route.data.pipe(
       map(res => res.homeDatas)
@@ -35,6 +35,7 @@ export class HomeComponent implements OnInit {
       this.songSheetList = songSheetList;
       this.singers = singers;
     });
+
   }
 
   ngOnInit() {
@@ -50,10 +51,12 @@ export class HomeComponent implements OnInit {
 
   onPlaySheet(id: number) {
     this.sheetServe.playSheet(id).subscribe(list => {
-      this.store$.dispatch(SetSongList({ songList: list }));
-      this.store$.dispatch(SetPlayList({ playList: list }));
-      this.store$.dispatch(SetCurrentIndex({ currentIndex: 0 }));
+      this.batchActionsServe.selectPlayList({ list, index: 0 });
     });
+  }
+
+  toInfo(id: number) {
+    this.router.navigate(['/sheetInfo', id]);
   }
 
 }

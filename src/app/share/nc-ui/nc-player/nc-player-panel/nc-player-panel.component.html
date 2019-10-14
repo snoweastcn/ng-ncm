@@ -8,7 +8,8 @@
            title="收藏全部"></i>收藏全部
       </div>
       <span class="line"></span>
-      <div class="clear-all">
+      <div class="clear-all"
+           (click)="clearSongList.emit()">
         <i class="icon trush"
            title="清除"></i>清除
       </div>
@@ -23,7 +24,8 @@
          class="imgbd">
     <div class="msk"></div>
     <app-nc-scroll class="list-wrap"
-                   [data]="songList">
+                   [data]="songList"
+                   (scrollEnd)="scrollY = $event">
       <ul class="">
         <li *ngFor="let song of songList; index as i"
             [class.current]="currentIndex === i"
@@ -36,7 +38,8 @@
             <i class="ico share"
                title="分享"></i>
             <i class="ico trush"
-               title="删除"></i>
+               title="删除"
+               (click)="deleteSong.emit(song)"></i>
           </div>
           <div class="singers clearfix ellipsis">
             <div class="singer-item"
@@ -50,7 +53,16 @@
           <div class="col link"></div>
         </li>
       </ul>
-      <ul>歌词</ul>
+    </app-nc-scroll>
+
+    <app-nc-scroll class="list-lyric"
+                   [data]="currentLyric">
+      <ul>
+        <li *ngFor="let lyric of currentLyric; index as i"
+            [class.current]="currentLineNum === i">
+          {{lyric.txt}} <br /> {{lyric.txtCn}}
+        </li>
+      </ul>
     </app-nc-scroll>
   </div>
 </div>
