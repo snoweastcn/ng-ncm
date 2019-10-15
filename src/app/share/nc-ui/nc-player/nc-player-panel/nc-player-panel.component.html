@@ -38,19 +38,20 @@
             <i class="ico share"
                title="分享"></i>
             <i class="ico trush"
-               title="删除"
+               title="删除" data-act="delete"
                (click)="deleteSong.emit(song)"></i>
           </div>
           <div class="singers clearfix ellipsis">
             <div class="singer-item"
                  *ngFor="let singer of song?.ar; last as isLast">
-              <a href=""
-                 class="col ellipsis">{{singer.name}}</a>
+              <a class="col ellipsis"
+                 (click)="toInfo($event,['/singer', singer.id])">{{singer.name}}</a>
               <span [hidden]="isLast">/</span>
             </div>
           </div>
           <div class="col duration">{{song?.dt / 1000 | formatTime}}</div>
-          <div class="col link"></div>
+          <div class="col link"
+               (click)="toInfo($event,['/songInfo', song.id])"></div>
         </li>
       </ul>
     </app-nc-scroll>

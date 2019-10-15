@@ -13,17 +13,9 @@
           </ul>
         </div>L
         <div class="right">
-          <div class="search">
-            <nz-input-group [nzSuffix]="suffixIconSearch">
-              <input type="text"
-                     nz-input
-                     placeholder="歌单/歌手/歌曲" />
-            </nz-input-group>
-            <ng-template #suffixIconSearch>
-              <i nz-icon
-                 nzType="search"></i>
-            </ng-template>
-          </div>
+          <app-nc-search (searhChange)="onSearchChange($event)"
+                         [searchResult]="searchResult"></app-nc-search>
+
           <div class="member">
             <div class="no-login">
               <ul nz-menu
@@ -67,3 +59,7 @@
 </div>
 
 <app-nc-player></app-nc-player>
+<app-nc-layer-modal>
+  <app-nc-layer-login name="login"></app-nc-layer-login>
+  <app-nc-layer-default name="default" (changeModalType)="onChangeModalType($event)"></app-nc-layer-default>
+</app-nc-layer-modal>

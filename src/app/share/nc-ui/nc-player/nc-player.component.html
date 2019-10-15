@@ -1,9 +1,15 @@
 <div class="m-player"
+     [@showHide]="showPlayer"
      appClickoutside
-     (clickOutSide)="onClickOutSide()"
-     [bingFlag]="bingFlag">
-  <div class="lock">
-    <div class="left"><i></i></div>
+     (clickOutSide)="onClickOutSide($event)"
+     [bingFlag]="bingFlag"
+     (mouseenter)="togglePlayer('show')"
+     (mouseleave)="togglePlayer('hide')"
+     (@showHide.start)="animating = true"
+     (@showHide.done)="onAnimateDone($event)">
+  <div class="lock"
+       (click)="isLocked = !isLocked">
+    <div class="left"><i [class.locked]="isLocked"></i></div>
   </div>
   <div class="hand"></div>
   <div class="container">
@@ -20,14 +26,16 @@
       <div class="head">
         <img [src]="picUrl"
              alt="">
-        <i class="mask"></i>
+        <i class="mask"
+           (click)="toInfo(['/songInfo', currentSong && currentSong.id])"></i>
       </div>
       <div class="play">
         <div class="words clearfix">
-          <p class="ellipsis margin-bottom-none">{{currentSong?.name}}</p>
+          <p class="ellipsis margin-bottom-none"
+             (click)="toInfo(['/songInfo', currentSong.id])">{{currentSong?.name}}</p>
           <ul class="songs clearfix margin-bottom-none">
             <li *ngFor="let item of currentSong?.ar; last as isLast">
-              <a>{{item.name}}</a>
+              <a (click)="toInfo(['/singer', item.id])">{{item.name}}</a>
               <span [hidden]="isLast">/</span>
             </li>
           </ul>
@@ -57,7 +65,7 @@
         <i [ngClass]="currentMode.type"
            [title]="currentMode.label"
            (click)="changeMode()"></i>
-        <p class="open"
+        <p nz-tooltip [nzTooltipTitle]="controlTooltip.title" [nzVisible]="controlTooltip.show" nzOverlayClassName="tip-bg" class="open"
            (click)="toggleListPanel()">
           <span></span>
         </p>
@@ -77,7 +85,8 @@
                            (changeSong)="onChangeSong($event)"
                            (handleClose)="showListPanel = false"
                            (deleteSong)="onDeleteSong($event)"
-                           (clearSongList)="onClearSongList()"></app-nc-player-panel>
+                           (clearSongList)="onClearSongList()"
+                           (toInfoEvent)="toInfo($event)"></app-nc-player-panel>
 
     </div>
   </div>
@@ -86,5 +95,6 @@
          [src]="currentSong?.url"
          (canplay)="onCanPlay()"
          (timeupdate)="onTimeUptate($event)"
-         (ended)="onEnded()"></audio>
+         (ended)="onEnded()"
+         (error)="onError()"></audio>
 </div>

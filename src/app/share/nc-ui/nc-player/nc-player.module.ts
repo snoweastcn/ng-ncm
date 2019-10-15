@@ -7,6 +7,7 @@ import { FormatTimePipe } from '../../pipes/format-time.pipe';
 import { NcPlayerPanelComponent } from './nc-player-panel/nc-player-panel.component';
 import { NcScrollComponent } from './nc-scroll/nc-scroll.component';
 import { ClickoutsideDirective } from '../../directives/clickoutside.directive';
+import { NzToolTipModule } from 'ng-zorro-antd';
 
 
 
@@ -21,7 +22,8 @@ import { ClickoutsideDirective } from '../../directives/clickoutside.directive';
   imports: [
     CommonModule,
     FormsModule,
-    NcSliderModule
+    NcSliderModule,
+    NzToolTipModule
   ],
   exports: [
     NcPlayerComponent,

@@ -14,6 +14,7 @@ export interface HotTag {
 export interface Singer {
   id: number;
   name: string;
+  alias: string[];
   albumSize: number;
   picUrl: string;
 }
@@ -61,5 +62,16 @@ export interface Lyric {
 export interface SheetList {
   playlists: SongSheet[];
   total: number;
+}
+// 歌手详情
+export interface SingerDetail {
+  artist: Singer;
+  hotSongs: Song[];
+}
+// 搜索结果
+export interface SearchResult {
+  artists?: Singer[];
+  playlists?: SongSheet[];
+  songs?: Song[];
 }
 

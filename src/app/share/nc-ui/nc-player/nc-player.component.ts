@@ -1,16 +1,26 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, Inject } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { AppStoreModule } from 'src/app/store';
-import { getSongList, getPlayList, getCurrentIndex, getPlayMode, getCurrentSong } from 'src/app/store/selectors/player.selector';
+import {
+  getSongList,
+  getPlayList,
+  getCurrentIndex,
+  getPlayMode,
+  getCurrentSong,
+  getCurrentAction
+} from 'src/app/store/selectors/player.selector';
 import { Song } from 'src/app/services/data-types/common.types';
 import { PlayMode } from './player-type';
-import { SetCurrentIndex, SetPlayMode, SetPlayList, SetSongList } from 'src/app/store/actions/player.action';
-import { Subscription, fromEvent } from 'rxjs';
+import { SetCurrentIndex, SetPlayMode, SetPlayList, SetCurrentAction } from 'src/app/store/actions/player.action';
 import { DOCUMENT } from '@angular/common';
 import { shuffle, findIndex } from 'src/app/utils/array';
 import { NcPlayerPanelComponent } from './nc-player-panel/nc-player-panel.component';
 import { NzModalService } from 'ng-zorro-antd';
 import { BatchActionsService } from 'src/app/store/batch-actions.service';
+import { Router } from '@angular/router';
+import { trigger, state, style, transition, animate, AnimationEvent } from '@angular/animations';
+import { CurrentActions } from 'src/app/store/reducers/player.reducer';
+import { timer } from 'rxjs';
 
 const modeTypes: PlayMode[] = [
   { type: 'loop', label: '循环' },
@@ -18,12 +28,33 @@ const modeTypes: PlayMode[] = [
   { type: 'singleLoop', label: '单曲循环' },
 ];
 
+enum TipTitles {
+  Add = '已添加到列表',
+  Play = '已开始播放'
+}
+
 @Component({
   selector: 'app-nc-player',
   templateUrl: './nc-player.component.html',
-  styleUrls: ['./nc-player.component.less']
+  styleUrls: ['./nc-player.component.less'],
+  animations: [trigger('showHide', [
+    state('show', style({ bottom: 0 })),
+    state('hide', style({ bottom: -71 })),
+    transition('show=>hide', [animate('0.4s')]),
+    transition('hide=>show', [animate('0.2s')]),
+  ])]
 })
 export class NcPlayerComponent implements OnInit, AfterViewInit {
+  showPlayer = 'hide';
+  isLocked = false;
+
+  controlTooltip = {
+    title: '',
+    show: false
+  };
+
+  // 是否正在动画
+  animating = false;
   @ViewChild('audio', { static: true }) private audio: ElementRef;
   @ViewChild(NcPlayerPanelComponent, { static: false }) private playPanel: NcPlayerPanelComponent;
   private audioEl: HTMLAudioElement;
@@ -54,8 +85,6 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
   // 是否绑定 document click 事件
   bingFlag = false;
 
-  private winClick: Subscription;
-
   // 当前播放模式
   currentMode: PlayMode;
 
@@ -66,7 +95,8 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
     private store$: Store<AppStoreModule>,
     @Inject(DOCUMENT) private doc: Document,
     private nzModalServe: NzModalService,
-    private batchActionsServe: BatchActionsService
+    private batchActionsServe: BatchActionsService,
+    private router: Router
   ) {
     const appStore$ = this.store$.pipe(select('player'));
 
@@ -85,6 +115,9 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
     }, {
       type: getCurrentSong,
       cb: (currentSong: Song) => this.watchCurrentSong(currentSong)
+    }, {
+      type: getCurrentAction,
+      cb: (currentAction: CurrentActions) => this.watchCurrentAction(currentAction)
     }];
 
     stateArr.forEach(item => {
@@ -120,11 +153,41 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private watchCurrentSong(currentSong: Song) {
-    if (currentSong) {
-      this.currentSong = currentSong;
-      this.duration = currentSong.dt / 1000;
+  private watchCurrentSong(song: Song) {
+    this.currentSong = song;
+    if (song) {
+      this.duration = song.dt / 1000;
     }
+  }
+
+  private watchCurrentAction(action: CurrentActions) {
+    const title = TipTitles[CurrentActions[action]];
+    if (title) {
+      this.controlTooltip.title = title;
+      if (this.showPlayer === 'hide') {
+        this.togglePlayer('show');
+      } else {
+        this.showToolTip();
+      }
+    }
+    this.store$.dispatch(SetCurrentAction({ currentAction: CurrentActions.Other }));
+  }
+
+  onAnimateDone(event: AnimationEvent) {
+    this.animating = false;
+    if (event.toState === 'show' && this.controlTooltip.title) {
+      this.showToolTip();
+    }
+  }
+
+  private showToolTip() {
+    this.controlTooltip.show = true;
+    timer(1500).subscribe(() => {
+      this.controlTooltip = {
+        title: '',
+        show: false
+      };
+    });
   }
 
   private updateCurrentIndex(list: Song[], song: Song) {
@@ -258,6 +321,12 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // 播放错误
+  onError() {
+    this.playing = false;
+    this.bufferPercent = 0;
+  }
+
   // 通过播放列表切换歌曲
   onChangeSong(song: Song) {
     this.updateCurrentIndex(this.playList, song);
@@ -282,10 +351,26 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onClickOutSide() {
-    this.showVolumePanel = false;
-    this.showListPanel = false;
-    this.bingFlag = false;
+  onClickOutSide(target: HTMLElement) {
+    if (target.dataset.act !== 'delete') {
+      this.showVolumePanel = false;
+      this.showListPanel = false;
+      this.bingFlag = false;
+    }
+  }
+
+  toInfo(path: [string, number]) {
+    if (path[1]) {
+      this.showListPanel = false;
+      this.showVolumePanel = false;
+      this.router.navigate(path);
+    }
+  }
+
+  togglePlayer(type: string) {
+    if (!this.isLocked && !this.animating) {
+      this.showPlayer = type;
+    }
   }
 
 }

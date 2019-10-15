@@ -59,4 +59,7 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/sheetInfo', id]);
   }
 
+  openModal() {
+    this.batchActionsServe.controlModal();
+  }
 }

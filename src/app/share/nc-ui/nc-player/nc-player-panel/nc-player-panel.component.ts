@@ -34,6 +34,7 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
   @Output() changeSong = new EventEmitter<Song>();
   @Output() deleteSong = new EventEmitter<Song>();
   @Output() clearSongList = new EventEmitter<void>();
+  @Output() toInfoEvent = new EventEmitter<[string, number]>();
 
   @ViewChildren(NcScrollComponent) private ncScroll: QueryList<NcScrollComponent>;
 
@@ -65,7 +66,9 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
     }
 
     if (changes.songList) {
-      this.updateCurrentIndex();
+      if (this.currentSong) {
+        this.updateCurrentIndex();
+      }
     }
 
     if (changes.currentSong) {
@@ -171,6 +174,11 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
     if (this.lyric) {
       this.lyric.seek(time);
     }
+  }
+
+  toInfo(evt: MouseEvent, path: [string, number]) {
+    evt.stopPropagation();
+    this.toInfoEvent.emit(path);
   }
 
 }
