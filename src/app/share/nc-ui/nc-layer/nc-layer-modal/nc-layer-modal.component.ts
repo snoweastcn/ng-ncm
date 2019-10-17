@@ -75,7 +75,6 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit {
   listenResizeToCenter() {
     const modal = this.modalRef.nativeElement;
     const modalSize = this.getHideDomSize(modal);
-    console.log(modalSize);
     this.keepCenter(modal, modalSize);
     this.resizeHandler = this.rd.listen('window', 'resize', () => this.keepCenter(modal, modalSize));
   }
@@ -108,6 +107,7 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit {
   }
 
   private keydownListener(e: KeyboardEvent) {
+    // tslint:disable-next-line: deprecation
     if (e.keyCode === ESCAPE) {
       this.hide();
     }

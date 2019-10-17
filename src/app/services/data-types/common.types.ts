@@ -1,3 +1,9 @@
+export interface AnyJson {
+  [key: string]: any;
+}
+export interface SampleBack extends AnyJson {
+  code: number;
+}
 // 轮播
 export interface Banner {
   targetId: number;

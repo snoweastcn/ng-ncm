@@ -17,7 +17,8 @@
                          [searchResult]="searchResult"></app-nc-search>
 
           <div class="member">
-            <div class="no-login">
+            <div class="no-login"
+                 *ngIf="!user else logined">
               <ul nz-menu
                   nzTheme="dark"
                   nzMode="horizontal">
@@ -29,13 +30,15 @@
                        nzTheme="outline"></i>
                   </div>
                   <ul>
-                    <li nz-menu-item>
+                    <li nz-menu-item
+                        (click)="openModal('loginByPhone')">
                       <i nz-icon
                          nzType="mobile"
                          nzTheme="outline"></i>
                       手机登录
                     </li>
-                    <li nz-menu-item>
+                    <li nz-menu-item
+                        (click)="openModal('register')">
                       <i nz-icon
                          nzType="user-add"
                          nzTheme="outline"></i>
@@ -45,6 +48,39 @@
                 </li>
               </ul>
             </div>
+
+            <ng-template #logined>
+              <div class="login">
+                <ul nz-menu
+                    nzMode="horizontal"
+                    nzTheme="dark">
+                  <li nz-submenu>
+                    <div title>
+                      <nz-avatar nzIcon="user"
+                                 [nzSrc]="user.profile.avatarUrl"></nz-avatar>
+                      <i nz-icon
+                         nzType="down"
+                         nzTheme="outline"></i>
+                    </div>
+                    <ul>
+                      <li nz-menu-item
+                          [routerLink]="['/member', user.profile.userId]">
+                        <i nz-icon
+                           nzType="user"
+                           nzTheme="outline"></i>我的主页
+                      </li>
+                      <li nz-menu-item
+                          (click)="logout()">
+                        <i nz-icon
+                           nzType="close-circle"
+                           nzTheme="outline"></i>退出
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </ng-template>
+
           </div>
         </div>
       </div>
@@ -60,6 +96,10 @@
 
 <app-nc-player></app-nc-player>
 <app-nc-layer-modal>
-  <app-nc-layer-login name="login"></app-nc-layer-login>
-  <app-nc-layer-default name="default" (changeModalType)="onChangeModalType($event)"></app-nc-layer-default>
+  <app-nc-layer-login name="login"
+                      [ncRememberLogin]="ncRememberLogin"
+                      (login)="onLogin($event)"
+                      (changeModalType)="onChangeModalType($event)"></app-nc-layer-login>
+  <app-nc-layer-default name="default"
+                        (changeModalType)="onChangeModalType($event)"></app-nc-layer-default>
 </app-nc-layer-modal>

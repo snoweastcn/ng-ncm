@@ -6,6 +6,7 @@ import { Banner, HotTag, SongSheet, Singer } from 'src/app/services/data-types/c
 import { Observable, forkJoin } from 'rxjs';
 import { first } from 'rxjs/internal/operators';
 
+
 type HomeDataType = [Banner[], HotTag[], SongSheet[], Singer[]];
 
 @Injectable()
@@ -16,11 +17,12 @@ export class HomeResolverService implements Resolve<HomeDataType> {
   ) { }
 
   resolve(): Observable<HomeDataType> {
+
     return forkJoin([
       this.homeServe.getBanners(),
       this.homeServe.getHotTags(),
       this.homeServe.getPersonalSheetList(),
-      this.singerServe.getEnterSinger()
+      this.singerServe.getEnterSinger(),
     ]).pipe(first());
   }
 }
