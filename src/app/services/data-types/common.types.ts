@@ -52,12 +52,13 @@ export interface SongSheet {
   tracks: Song[];
   tags: string[];
   createTime: number;
-  creator: { nikname: string; avatarUrl: string };
+  creator: { nickname: string; avatarUrl: string };
   description: string;
   subscribedCount: number;
   shareCount: number;
   commentCount: number;
   subscribed: boolean;
+  trackCount: number;
 }
 // 歌词
 export interface Lyric {

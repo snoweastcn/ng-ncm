@@ -9,7 +9,7 @@ import {
   getCurrentSong,
   getCurrentAction
 } from 'src/app/store/selectors/player.selector';
-import { Song } from 'src/app/services/data-types/common.types';
+import { Song, Singer } from 'src/app/services/data-types/common.types';
 import { PlayMode } from './player-type';
 import { SetCurrentIndex, SetPlayMode, SetPlayList, SetCurrentAction } from 'src/app/store/actions/player.action';
 import { DOCUMENT } from '@angular/common';
@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { trigger, state, style, transition, animate, AnimationEvent } from '@angular/animations';
 import { CurrentActions } from 'src/app/store/reducers/player.reducer';
 import { timer } from 'rxjs';
+import { SetShareInfo } from 'src/app/store/actions/member.action';
 
 const modeTypes: PlayMode[] = [
   { type: 'loop', label: '循环' },
@@ -371,6 +372,26 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
     if (!this.isLocked && !this.animating) {
       this.showPlayer = type;
     }
+  }
+
+  // 收藏歌曲
+  onLikeSong(id: string) {
+    if (id) {
+      this.batchActionsServe.likeSong(id);
+    }
+  }
+
+  // 分享
+  onShareSong(resource: Song, type = 'song') {
+    if (resource) {
+      const txt = this.makeTxt('歌曲', resource.name, resource.ar);
+      this.store$.dispatch(SetShareInfo({ info: { id: resource.id.toString(), type, txt } }));
+    }
+  }
+
+  private makeTxt(type: string, name: string, makeBy: Singer[]): string {
+    const makeByStr = makeBy.map(item => item.name).join('/');
+    return `${type}: ${name} -- ${makeByStr}`;
   }
 
 }

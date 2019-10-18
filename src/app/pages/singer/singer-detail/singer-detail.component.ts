@@ -32,7 +32,6 @@ export class SingerDetailComponent implements OnInit, OnDestroy {
     private batchActionServe: BatchActionsService,
     private nzMessageServe: NzMessageService,
   ) {
-    console.log(1);
     this.route.data.pipe(map(res => res.singerDetail)).subscribe(([detail, simiSingers]) => {
       this.singerDetail = detail;
       this.simiSingers = simiSingers;

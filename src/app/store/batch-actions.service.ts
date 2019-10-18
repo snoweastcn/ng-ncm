@@ -6,7 +6,8 @@ import { SetSongList, SetPlayList, SetCurrentIndex, SetCurrentAction } from './a
 import { shuffle, findIndex } from '../utils/array';
 import { PlayState, CurrentActions } from './reducers/player.reducer';
 import { MemberState, ModalTypes } from './reducers/member.reducer';
-import { SetModalVisible, SetModalType } from './actions/member.action';
+import { SetModalVisible, SetModalType, SetLikeId } from './actions/member.action';
+import { timer } from 'rxjs';
 
 @Injectable({
   providedIn: AppStoreModule
@@ -111,8 +112,8 @@ export class BatchActionsService {
 
   // 收藏歌曲
   likeSong(id: string) {
-    // this.store$.dispatch(SetModalType({ modalType: ModalTypes.Like }));
-    // this.store$.dispatch(SetLikeId({ id }));
+    this.store$.dispatch(SetModalType({ modalType: ModalTypes.Like }));
+    this.store$.dispatch(SetLikeId({ id }));
   }
 
   // 会员弹窗显示隐藏
@@ -121,7 +122,13 @@ export class BatchActionsService {
       this.store$.dispatch(SetModalType({ modalType }));
     }
     this.store$.dispatch(SetModalVisible({ modalVisible: visibel }));
+    if (!visibel) {
+      timer(500).subscribe(() => {
+        this.store$.dispatch(SetModalType({ modalType: ModalTypes.Default }));
+      });
+    }
   }
+
 }
 
 

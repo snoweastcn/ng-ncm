@@ -35,6 +35,8 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
   @Output() deleteSong = new EventEmitter<Song>();
   @Output() clearSongList = new EventEmitter<void>();
   @Output() toInfoEvent = new EventEmitter<[string, number]>();
+  @Output() likeSong = new EventEmitter<string>();
+  @Output() shareSong = new EventEmitter<Song>();
 
   @ViewChildren(NcScrollComponent) private ncScroll: QueryList<NcScrollComponent>;
 
@@ -179,6 +181,16 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
   toInfo(evt: MouseEvent, path: [string, number]) {
     evt.stopPropagation();
     this.toInfoEvent.emit(path);
+  }
+
+  toLikeSong(evt: MouseEvent, id: string) {
+    evt.stopPropagation();
+    this.likeSong.emit(id);
+  }
+
+  toShareSong(evt: MouseEvent, song: Song) {
+    evt.stopPropagation();
+    this.shareSong.emit(song);
   }
 
 }

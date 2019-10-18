@@ -8,11 +8,12 @@ import {
   AfterViewInit,
   Renderer2,
   Inject,
-  Input
+  Output,
+  EventEmitter,
+  Input,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { AppStoreModule } from 'src/app/store';
-import { getModalVisible, getModalType } from 'src/app/store/selectors/member.selector';
 import { ModalTypes } from 'src/app/store/reducers/member.reducer';
 import { Overlay, OverlayRef, OverlayKeyboardDispatcher, BlockScrollStrategy, OverlayContainer } from '@angular/cdk/overlay';
 import { BatchActionsService } from 'src/app/store/batch-actions.service';
@@ -32,22 +33,21 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
     transition('show<=>hide', animate('0.1s'))
   ])]
 })
-export class NcLayerModalComponent implements OnInit, AfterViewInit {
+export class NcLayerModalComponent implements OnInit, AfterViewInit, OnChanges {
+  @Input() visible = false;
+  @Input() currentModalType = ModalTypes.Default;
+  @Output() loadMySheets = new EventEmitter<void>();
+  @ViewChild('modalContainer', { static: true }) private modalRef: ElementRef;
+
   showModal = 'hide';
-  private visible = false;
-  currentModalType = ModalTypes.Default;
   private overlayRef: OverlayRef;
   private scrollStrategy: BlockScrollStrategy;
   private resizeHandler: () => void;
   private overlayContainerEl: HTMLElement;
-  // @Input() currentModalType = ModalTypes.Default;
-
-  @ViewChild('modalContainer', { static: true }) private modalRef: ElementRef;
 
   constructor(
     @Inject(DOCUMENT) private doc: Document,
     @Inject(WINDOW) private win: Window,
-    private store$: Store<AppStoreModule>,
     private overlay: Overlay,
     private elementRef: ElementRef,
     private overlayKeyboardDispatch: OverlayKeyboardDispatcher,
@@ -56,15 +56,17 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit {
     private rd: Renderer2,
     private overlayContainerServe: OverlayContainer
   ) {
-    const appStore$ = this.store$.pipe(select('member'));
-    appStore$.pipe(select(getModalVisible)).subscribe(visib => this.watchModalVisible(visib));
-    appStore$.pipe(select(getModalType)).subscribe(type => this.watchModalType(type));
     this.scrollStrategy = this.overlay.scrollStrategies.block();
-
   }
 
   ngOnInit() {
     this.createOverlay();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.visible && !changes.visible.firstChange) {
+      this.handleVisibleChange(this.visible);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -113,13 +115,6 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private watchModalVisible(visib: boolean) {
-    if (this.visible !== visib) {
-      this.visible = visib;
-      this.handleVisibleChange(visib);
-    }
-  }
-
   private handleVisibleChange(visib: boolean) {
     if (visib) {
       this.showModal = 'show';
@@ -142,14 +137,6 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit {
       this.overlayContainerEl.style.pointerEvents = type;
     }
   }
-
-  private watchModalType(type: ModalTypes) {
-    if (this.currentModalType !== type) {
-      this.currentModalType = type;
-      this.cdr.markForCheck();
-    }
-  }
-
 
   hide() {
     this.batchActionsServe.controlModal(false);

@@ -9,9 +9,9 @@ type SingerDetailDataModel = [SingerDetail, Singer[]];
 
 @Injectable()
 export class SingerResolverService implements Resolve<SingerDetailDataModel> {
-  constructor(private singerServe: SingerService) {
-    console.log(0);
-  }
+
+  constructor(private singerServe: SingerService) { }
+
   resolve(route: ActivatedRouteSnapshot): Observable<SingerDetailDataModel> {
     const id = route.paramMap.get('id');
     return forkJoin([

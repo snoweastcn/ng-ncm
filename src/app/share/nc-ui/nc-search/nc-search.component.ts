@@ -58,7 +58,6 @@ export class NcSearchComponent implements OnInit, AfterViewInit, OnChanges {
       distinctUntilChanged(),
       pluck('target', 'value')
     ).subscribe((val: string) => {
-      console.log(val);
       this.searhChange.emit(val);
     });
   }

@@ -48,6 +48,8 @@ export class HomeComponent implements OnInit {
     this.store$.pipe(select('member'), select(getUserId)).subscribe(id => {
       if (id) {
         this.getUserDetail(id);
+      } else {
+        this.user = null;
       }
     });
 

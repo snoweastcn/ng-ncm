@@ -52,11 +52,13 @@
         </div>
       </div>
 
-      <div class="order">
+      <div class="oper">
         <i class="like"
-           title="收藏"></i>
+           title="收藏"
+           (click)="onLikeSong(currentSong ? currentSong.id.toString() : '')"></i>
         <i class="share"
-           title="分享"></i>
+           title="分享"
+           (click)="onShareSong(currentSong)"></i>
       </div>
       <div class="ctrl">
         <i class="volume"
@@ -65,7 +67,11 @@
         <i [ngClass]="currentMode.type"
            [title]="currentMode.label"
            (click)="changeMode()"></i>
-        <p nz-tooltip [nzTooltipTitle]="controlTooltip.title" [nzVisible]="controlTooltip.show" nzOverlayClassName="tip-bg" class="open"
+        <p nz-tooltip
+           [nzTooltipTitle]="controlTooltip.title"
+           [nzVisible]="controlTooltip.show"
+           nzOverlayClassName="tip-bg"
+           class="open"
            (click)="toggleListPanel()">
           <span></span>
         </p>
@@ -86,7 +92,9 @@
                            (handleClose)="showListPanel = false"
                            (deleteSong)="onDeleteSong($event)"
                            (clearSongList)="onClearSongList()"
-                           (toInfoEvent)="toInfo($event)"></app-nc-player-panel>
+                           (toInfoEvent)="toInfo($event)"
+                           (likeSong)="onLikeSong($event)"
+                           (shareSong)="onShareSong($event)"></app-nc-player-panel>
 
     </div>
   </div>

@@ -95,11 +95,29 @@
 </div>
 
 <app-nc-player></app-nc-player>
-<app-nc-layer-modal>
+<app-nc-layer-modal [visible]="visible"
+                    [currentModalType]="currentModalType"
+                    (loadMySheets)="onLoadMySheets()">
+  <app-nc-layer-register name="register"
+                         [visible]="visible"
+                         (changeModalType)="onChangeModalType($event)"
+                         (register)="onRegister($event)"></app-nc-layer-register>
   <app-nc-layer-login name="login"
                       [ncRememberLogin]="ncRememberLogin"
                       (login)="onLogin($event)"
                       (changeModalType)="onChangeModalType($event)"></app-nc-layer-login>
+  <app-nc-layer-like name="like"
+                     [mySheets]="mySheets"
+                     [likeId]="likeId"
+                     [visible]="visible"
+                     (createSheet)="onCreateSheet($event)"
+                     (likeSong)="onLikeSong($event)"
+                     (changeModalType)="onChangeModalType($event)"></app-nc-layer-like>
+  <app-nc-layer-share name="share"
+                      [visible]="visible"
+                      [shareInfo]="shareInfo"
+                      (cancel)="closeModal()"
+                      (share)="onShare($event)"></app-nc-layer-share>
   <app-nc-layer-default name="default"
                         (changeModalType)="onChangeModalType($event)"></app-nc-layer-default>
 </app-nc-layer-modal>

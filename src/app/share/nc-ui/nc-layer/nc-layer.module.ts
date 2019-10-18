@@ -15,11 +15,23 @@ import {
   NzInputModule
 } from 'ng-zorro-antd';
 import { NcLayerLoginComponent } from './nc-layer-login/nc-layer-login.component';
+import { NcLayerLikeComponent } from './nc-layer-like/nc-layer-like.component';
+import { NcLayerShareComponent } from './nc-layer-share/nc-layer-share.component';
+import { NcLayerRegisterComponent } from './nc-layer-register/nc-layer-register.component';
+import { NcCheckCodeComponent } from './nc-check-code/nc-check-code.component';
 
 
 
 @NgModule({
-  declarations: [NcLayerModalComponent, NcLayerDefaultComponent, NcLayerLoginComponent],
+  declarations: [
+    NcLayerModalComponent,
+    NcLayerDefaultComponent,
+    NcLayerLoginComponent,
+    NcLayerLikeComponent,
+    NcLayerShareComponent,
+    NcLayerRegisterComponent,
+    NcCheckCodeComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -34,6 +46,14 @@ import { NcLayerLoginComponent } from './nc-layer-login/nc-layer-login.component
     NzIconModule,
     NzFormModule,
   ],
-  exports: [NcLayerModalComponent, NcLayerDefaultComponent, NcLayerLoginComponent]
+  exports: [
+    NcLayerModalComponent,
+    NcLayerDefaultComponent,
+    NcLayerLoginComponent,
+    NcLayerRegisterComponent,
+    NcLayerLikeComponent,
+    NcLayerShareComponent,
+    NcCheckCodeComponent
+  ]
 })
 export class NcLayerModule { }
