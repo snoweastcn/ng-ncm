@@ -8,13 +8,11 @@ import {
   EventEmitter,
   ViewChildren,
   QueryList,
-  Inject,
 } from '@angular/core';
 import { Song } from 'src/app/services/data-types/common.types';
 import { NcScrollComponent } from '../nc-scroll/nc-scroll.component';
 import { findIndex } from 'src/app/utils/array';
 import { timer } from 'rxjs';
-import { WINDOW } from 'src/app/services/services.module';
 import { SongService } from 'src/app/services/song.service';
 import { NcLyric, BaseLyricLine } from './nc-lyric';
 
@@ -53,7 +51,7 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
 
   private startLine = 2;
 
-  constructor(@Inject(WINDOW) private win: Window, private songServe: SongService) { }
+  constructor(private songServe: SongService) { }
 
   ngOnInit() {
   }
@@ -97,12 +95,6 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
             this.scrollToCurrentLyric(0);
           }
         });
-
-        // this.win.setTimeout(() => {
-        //   if (this.currentSong) {
-        //     this.scrollToCurrent(0);
-        //   }
-        // }, 80);
       }
     }
   }
@@ -191,6 +183,12 @@ export class NcPlayerPanelComponent implements OnInit, OnChanges {
   toShareSong(evt: MouseEvent, song: Song) {
     evt.stopPropagation();
     this.shareSong.emit(song);
+  }
+
+  // 收藏全部
+  onAddSongs(songs: Song[]) {
+    const ids = songs.map(item => item.id).join(',');
+    this.likeSong.emit(ids);
   }
 
 }

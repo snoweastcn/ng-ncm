@@ -11,7 +11,7 @@
         <a [href]="item.url"
            target="_blank"
            class="banner-item">
-          <img [src]="item.imageUrl" />
+          <img appImgDefalut [src]="item.imageUrl" />
         </a>
       </div>
     </nz-carousel>
@@ -52,7 +52,8 @@
         </div>
       </div>
       <div class="right">
-        <app-member-card [user]="user" (openModal)="openModal()"></app-member-card>
+        <app-member-card [user]="user"
+                         (openModal)="openModal()"></app-member-card>
 
         <div class="settled-singer">
           <div class="tit"><b>入驻歌手</b></div>
@@ -61,7 +62,8 @@
                  *ngFor="let singer of singers"
                  [routerLink]="['/singer', singer.id]">
               <div class="pic">
-                <img [src]="singer.picUrl"
+                <img appImgDefalut
+                     [src]="singer.picUrl"
                      [alt]="singer.name">
               </div>
               <div class="txt">

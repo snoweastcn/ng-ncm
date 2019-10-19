@@ -5,7 +5,9 @@
                  [listenSongs]="user.listenSongs"
                  [currentIndex]="currentIndex"
                  (changeType)="onChangeType($event)"
-                 (addSong)="onAddSong($event)">
+                 (addSong)="onAddSong($event)"
+                 (likeSong)="onLikeSong($event)"
+                 (shareSong)="onShareSong($event)">
     </app-records>
   </div>
 </div>

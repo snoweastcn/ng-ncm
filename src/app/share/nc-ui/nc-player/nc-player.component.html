@@ -24,7 +24,7 @@
            (click)="onNext(currentIndex + 1)"></i>
       </div>
       <div class="head">
-        <img [src]="picUrl"
+        <img appImgDefalut [src]="picUrl"
              alt="">
         <i class="mask"
            (click)="toInfo(['/songInfo', currentSong && currentSong.id])"></i>
@@ -63,7 +63,7 @@
       <div class="ctrl">
         <i class="volume"
            title="音量"
-           (click)="toggleVolPanel($event)"></i>
+           (click)="toggleVolPanel()"></i>
         <i [ngClass]="currentMode.type"
            [title]="currentMode.label"
            (click)="changeMode()"></i>
@@ -104,5 +104,5 @@
          (canplay)="onCanPlay()"
          (timeupdate)="onTimeUptate($event)"
          (ended)="onEnded()"
-         (error)="onError()"></audio>
+         (error)="onError($event.target)"></audio>
 </div>

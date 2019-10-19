@@ -45,8 +45,9 @@ export interface SongUrl {
 // 歌单
 export interface SongSheet {
   id: number;
+  userId: number;
   name: string;
-  plauCount: number;
+  playCount: number;
   picUrl: string;
   coverImgUrl: string;
   tracks: Song[];

@@ -3,7 +3,8 @@
   <div class="hd">
     <div class="hdc">
       <h4>播放列表（<span>{{songList.length}}</span>）</h4>
-      <div class="add-all">
+      <div class="add-all"
+           (click)="onAddSongs(songList)">
         <i class="icon"
            title="收藏全部"></i>收藏全部
       </div>
@@ -20,7 +21,7 @@
   </div>
 
   <div class="bd">
-    <img src="//music.163.com/api/img/blur/109951163826278397"
+    <img appImgDefalut src="//music.163.com/api/img/blur/109951163826278397"
          class="imgbd">
     <div class="msk"></div>
     <app-nc-scroll class="list-wrap"

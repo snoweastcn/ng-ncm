@@ -5,7 +5,7 @@ import { SheetInfoResolveService } from './sheet-info-resolve.service';
 
 
 const routes: Routes = [{
-  path: 'sheetInfo/:id', component: SheetInfoComponent, data: { title: '歌单详情' }, resolve: { sheetInfo: SheetInfoResolveService }
+  path: '', component: SheetInfoComponent, data: { title: '歌单详情' }, resolve: { sheetInfo: SheetInfoResolveService }
 }];
 
 @NgModule({

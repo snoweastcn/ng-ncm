@@ -39,5 +39,16 @@
       </nz-form-item>
     </form>
   </div>
+
+  <ng-template #code>
+    <div class="modal-wrap">
+      <app-nc-check-code [phone]="formModel.get('phone').value"
+                         [timing]="timing"
+                         [codePass]="codePass"
+                         (checkCode)="onCheckCode($event)"
+                         (checkExist)="onCheckExist()"
+                         (repeatSendCode)="sendCode()"></app-nc-check-code>
+    </div>
+  </ng-template>
 </div>
 <div class="m-footer clearfix"><a (click)="changeType()">&lt; 其它登陆方式</a></div>

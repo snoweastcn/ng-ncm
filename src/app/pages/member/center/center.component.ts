@@ -5,7 +5,7 @@ import { User, RecordVal, UserSheet } from 'src/app/services/data-types/member.t
 import { SheetService } from 'src/app/services/sheet.service';
 import { BatchActionsService } from 'src/app/store/batch-actions.service';
 import { RecordType, MemberService } from 'src/app/services/member.service';
-import { Song } from 'src/app/services/data-types/common.types';
+import { Song, Singer } from 'src/app/services/data-types/common.types';
 import { SongService } from 'src/app/services/song.service';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { Store, select } from '@ngrx/store';
 import { AppStoreModule } from 'src/app/store';
 import { getCurrentSong } from 'src/app/store/selectors/player.selector';
 import { findIndex } from 'src/app/utils/array';
+import { SetShareInfo } from 'src/app/store/actions/member.action';
 
 @Component({
   selector: 'app-center',
@@ -80,6 +81,7 @@ export class CenterComponent implements OnInit, OnDestroy {
     }
   }
 
+  // 添加歌曲
   onAddSong([song, isPlay]) {
     if (!this.currentSong || this.currentSong.id !== song.id) {
       this.songServe.getSongList(song).subscribe(list => {
@@ -90,6 +92,22 @@ export class CenterComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  // 收藏歌曲
+  onLikeSong(id: string) {
+    this.batchActionsServe.likeSong(id);
+  }
+
+  // 分享
+  onShareSong(resource: Song, type = 'song') {
+    const txt = this.makeTxt('歌曲', resource.name, resource.ar);
+    this.store$.dispatch(SetShareInfo({ info: { id: resource.id.toString(), type, txt } }));
+  }
+
+  private makeTxt(type: string, name: string, makeBy: Singer  []): string {
+    const makeByStr = makeBy.map(item => item.name).join('/');
+    return `${type}: ${name} -- ${makeByStr}`;
   }
 
   ngOnDestroy(): void {

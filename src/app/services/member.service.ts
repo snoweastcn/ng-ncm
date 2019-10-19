@@ -99,6 +99,11 @@ export class MemberService {
     return this.http.get(`${this.uri}/share/resource`, { params: { id, msg, type } }).pipe(map((res: SampleBack) => res.code));
   }
 
+  // 收藏歌手
+  likeSinger({ id, t = 1 }: Params): Observable<number> {
+    return this.http.get(`${this.uri}/artist/sub`, { params: { id, t } }).pipe(map((res: SampleBack) => res.code));
+  }
+
   // 发送验证码
   sendCode(phone: string): Observable<number> {
     return this.http.get(`${this.uri}/captcha/sent`, { params: { phone } }).pipe(map((res: SampleBack) => res.code));

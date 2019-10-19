@@ -1,4 +1,14 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef, SimpleChanges, OnChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  SimpleChanges,
+  OnChanges,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MemberService } from 'src/app/services/member.service';
 import { NzMessageService } from 'ng-zorro-antd';
@@ -14,7 +24,8 @@ enum Exist {
 @Component({
   selector: 'app-nc-layer-register',
   templateUrl: './nc-layer-register.component.html',
-  styleUrls: ['./nc-layer-register.component.less']
+  styleUrls: ['./nc-layer-register.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NcLayerRegisterComponent implements OnInit, OnChanges {
   @Input() visible = false;
@@ -70,12 +81,13 @@ export class NcLayerRegisterComponent implements OnInit, OnChanges {
 
 
   onCheckCode(code: string) {
+    console.log(code);
     this.memberServe.checkCode(this.formModel.get('phone').value, code)
-    .subscribe(
-      () => this.codePass = true,
-      () => this.codePass = false,
-      () => this.cdr.markForCheck()
-    );
+      .subscribe(
+        () => this.codePass = true,
+        () => this.codePass = false,
+        () => this.cdr.markForCheck()
+      );
   }
 
   onCheckExist() {

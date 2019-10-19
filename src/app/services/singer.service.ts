@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { ServicesModule, API_CONFIG } from './services.module';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/internal/operators';
+import { map, tap, catchError } from 'rxjs/internal/operators';
 import { Singer, SingerDetail } from './data-types/common.types';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import queryString from 'query-string';
@@ -47,5 +47,4 @@ export class SingerService {
     return this.http.get(`${this.uri}/simi/artist`, { params })
       .pipe(map((res: { artists: Singer[] }) => res.artists));
   }
-
 }

@@ -1,4 +1,9 @@
 <div id="app">
+  <nz-progress *ngIf="loadPercent < 100"
+               nzStrokeWidth="5"
+               [nzShowInfo]="false"
+               nzStatus="active"
+               [nzPercent]="loadPercent"></nz-progress>
   <nz-layout class="layout">
     <nz-header class="header">
       <div class="wrap">
@@ -9,7 +14,8 @@
               nzMode="horizontal">
             <li nz-menu-item
                 *ngFor="let item of menu"
-                [routerLink]="item.path">{{item.label}}</li>
+                [routerLink]="item.path"
+                [nzSelected]="routeTitle === item.label">{{item.label}}</li>
           </ul>
         </div>L
         <div class="right">
@@ -31,14 +37,14 @@
                   </div>
                   <ul>
                     <li nz-menu-item
-                        (click)="openModal('loginByPhone')">
+                        (click)="openModalByMenu('loginByPhone')">
                       <i nz-icon
                          nzType="mobile"
                          nzTheme="outline"></i>
                       手机登录
                     </li>
                     <li nz-menu-item
-                        (click)="openModal('register')">
+                        (click)="openModalByMenu('register')">
                       <i nz-icon
                          nzType="user-add"
                          nzTheme="outline"></i>
@@ -96,6 +102,7 @@
 
 <app-nc-player></app-nc-player>
 <app-nc-layer-modal [visible]="visible"
+                    [showSpin]="showSpin"
                     [currentModalType]="currentModalType"
                     (loadMySheets)="onLoadMySheets()">
   <app-nc-layer-register name="register"
@@ -103,6 +110,7 @@
                          (changeModalType)="onChangeModalType($event)"
                          (register)="onRegister($event)"></app-nc-layer-register>
   <app-nc-layer-login name="login"
+                      [visible]="visible"
                       [ncRememberLogin]="ncRememberLogin"
                       (login)="onLogin($event)"
                       (changeModalType)="onChangeModalType($event)"></app-nc-layer-login>
@@ -118,6 +126,20 @@
                       [shareInfo]="shareInfo"
                       (cancel)="closeModal()"
                       (share)="onShare($event)"></app-nc-layer-share>
-  <app-nc-layer-default name="default"
-                        (changeModalType)="onChangeModalType($event)"></app-nc-layer-default>
+  <app-nc-layer-default (changeModalType)="onChangeModalType($event)"></app-nc-layer-default>
 </app-nc-layer-modal>
+
+<nz-back-top [nzTemplate]="tpl">
+  <ng-template #tpl>
+    <div class="ant-back-top-inner">
+      <button nz-button
+              nzType="primary"
+              nzSize="large">
+        <i nz-icon
+           nzType="to-top"
+           nzTheme="outline"></i>
+      </button>
+    </div>
+  </ng-template>
+
+</nz-back-top>

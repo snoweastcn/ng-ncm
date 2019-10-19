@@ -12,15 +12,18 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  PLATFORM_ID
 } from '@angular/core';
 import { ModalTypes } from 'src/app/store/reducers/member.reducer';
 import { Overlay, OverlayRef, OverlayKeyboardDispatcher, BlockScrollStrategy, OverlayContainer } from '@angular/cdk/overlay';
 import { BatchActionsService } from 'src/app/store/batch-actions.service';
 import { ESCAPE } from '@angular/cdk/keycodes';
-import { DOCUMENT } from '@angular/common';
-import { WINDOW } from 'src/app/services/services.module';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+
+
+interface SizeType { w: number; h: number; }
 
 @Component({
   selector: 'app-nc-layer-modal',
@@ -34,7 +37,17 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   ])]
 })
 export class NcLayerModalComponent implements OnInit, AfterViewInit, OnChanges {
+
+  modalTitle = {
+    register: '注册',
+    loginByPhone: '手机登录',
+    share: '分享',
+    like: '收藏',
+    default: ''
+  };
+
   @Input() visible = false;
+  @Input() showSpin = false;
   @Input() currentModalType = ModalTypes.Default;
   @Output() loadMySheets = new EventEmitter<void>();
   @ViewChild('modalContainer', { static: true }) private modalRef: ElementRef;
@@ -45,9 +58,11 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit, OnChanges {
   private resizeHandler: () => void;
   private overlayContainerEl: HTMLElement;
 
+  private isBrowser: boolean;
+
   constructor(
+    @Inject(PLATFORM_ID) private plateformId: object,
     @Inject(DOCUMENT) private doc: Document,
-    @Inject(WINDOW) private win: Window,
     private overlay: Overlay,
     private elementRef: ElementRef,
     private overlayKeyboardDispatch: OverlayKeyboardDispatcher,
@@ -56,6 +71,7 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit, OnChanges {
     private rd: Renderer2,
     private overlayContainerServe: OverlayContainer
   ) {
+    this.isBrowser = isPlatformBrowser(this.plateformId);
     this.scrollStrategy = this.overlay.scrollStrategies.block();
   }
 
@@ -75,27 +91,29 @@ export class NcLayerModalComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   listenResizeToCenter() {
-    const modal = this.modalRef.nativeElement;
-    const modalSize = this.getHideDomSize(modal);
-    this.keepCenter(modal, modalSize);
-    this.resizeHandler = this.rd.listen('window', 'resize', () => this.keepCenter(modal, modalSize));
+    if (this.isBrowser) {
+      const modal = this.modalRef.nativeElement;
+      const modalSize = this.getHideDomSize(modal);
+      this.keepCenter(modal, modalSize);
+      this.resizeHandler = this.rd.listen('window', 'resize', () => this.keepCenter(modal, modalSize));
+    }
   }
 
-  private keepCenter(modal: HTMLElement, size: { w: number, h: number }) {
+  private keepCenter(modal: HTMLElement, size: SizeType) {
     const left = (this.getWindowSize().w - size.w) / 2;
     const top = (this.getWindowSize().h - size.h) / 2;
     modal.style.left = left + 'px';
     modal.style.top = top + 'px';
   }
 
-  private getWindowSize() {
+  private getWindowSize(): SizeType {
     return {
-      w: this.win.innerWidth || this.doc.documentElement.clientWidth || this.doc.body.offsetWidth,
-      h: this.win.innerHeight || this.doc.documentElement.clientHeight || this.doc.body.offsetHeight,
+      w: window.innerWidth || this.doc.documentElement.clientWidth || this.doc.body.offsetWidth,
+      h: window.innerHeight || this.doc.documentElement.clientHeight || this.doc.body.offsetHeight,
     };
   }
 
-  private getHideDomSize(dom: HTMLElement) {
+  private getHideDomSize(dom: HTMLElement): SizeType {
     return {
       w: dom.offsetWidth,
       h: dom.offsetHeight

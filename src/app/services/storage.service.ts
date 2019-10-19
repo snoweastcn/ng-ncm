@@ -1,5 +1,5 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { ServicesModule, WINDOW } from './services.module';
+import { ServicesModule } from './services.module';
 import { AnyJson } from './data-types/common.types';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -10,14 +10,13 @@ export class StorageService {
   private isBrowser: boolean;
   constructor(
     @Inject(PLATFORM_ID) private plateformId: object,
-    @Inject(WINDOW) private win: Window
   ) {
     this.isBrowser = isPlatformBrowser(this.plateformId);
   }
 
   getStorage(key: string, type = 'local'): string {
     if (this.isBrowser) {
-      return this.win[type + 'Storage'].getItem(key);
+      return window[type + 'Storage'].getItem(key);
     }
     return '';
   }
@@ -26,7 +25,7 @@ export class StorageService {
     if (this.isBrowser) {
       const kv = Array.isArray(params) ? params : [params];
       for (const { key, value } of kv) {
-        this.win[type + 'Storage'].setItem(key, value.toString());
+        window[type + 'Storage'].setItem(key, value.toString());
       }
     }
   }

@@ -10,13 +10,11 @@ import {
   SimpleChanges,
   Output,
   EventEmitter,
-  Inject
 } from '@angular/core';
 import BScroll from '@better-scroll/core';
 import ScrollBar from '@better-scroll/scroll-bar';
 import MouseWheel from '@better-scroll/mouse-wheel';
 import { timer } from 'rxjs';
-import { WINDOW } from 'src/app/services/services.module';
 
 BScroll.use(ScrollBar);
 BScroll.use(MouseWheel);
@@ -48,7 +46,7 @@ export class NcScrollComponent implements OnInit, AfterViewInit, OnChanges {
 
   @ViewChild('wrap', { static: true }) private wrapRef: ElementRef;
 
-  constructor(readonly el: ElementRef, @Inject(WINDOW) private win: Window) { }
+  constructor(readonly el: ElementRef) { }
 
   ngOnInit() {
   }
@@ -78,10 +76,6 @@ export class NcScrollComponent implements OnInit, AfterViewInit, OnChanges {
     timer(this.refreshDelay).subscribe(() => {
       this.refresh();
     });
-
-    // this.win.setTimeout(() => {
-    //   this.refresh();
-    // }, 80);
   }
 
   scrollToElement(...args: any) {

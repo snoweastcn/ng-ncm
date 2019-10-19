@@ -19,7 +19,7 @@ import { NcUiModule } from './nc-ui/nc-ui.module';
     CommonModule,
     FormsModule,
     NgZorroAntdModule,
-    NcUiModule
+    NcUiModule,
   ]
 })
 export class ShareModule { }

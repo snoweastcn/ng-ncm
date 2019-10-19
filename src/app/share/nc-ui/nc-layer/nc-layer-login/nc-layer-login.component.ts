@@ -17,6 +17,7 @@ export interface LoginParams extends Params {
 })
 export class NcLayerLoginComponent implements OnInit, OnChanges {
   @Input() ncRememberLogin: LoginParams;
+  @Input() visible = false;
   @Output() changeModalType = new EventEmitter<string | void>();
   @Output() login = new EventEmitter<LoginParams>();
 
@@ -36,6 +37,7 @@ export class NcLayerLoginComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     const userLoginParams = changes.ncRememberLogin;
+    const visible = changes.visible;
     if (userLoginParams) {
       let phone = '';
       let password = '';
@@ -47,6 +49,10 @@ export class NcLayerLoginComponent implements OnInit, OnChanges {
         remember = value.remember;
       }
       this.setModel({ phone, password, remember });
+    }
+
+    if (visible && !visible.firstChange) {
+      this.formModel.markAllAsTouched();
     }
   }
 

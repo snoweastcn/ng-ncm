@@ -15,7 +15,7 @@ import { SetCurrentIndex, SetPlayMode, SetPlayList, SetCurrentAction } from 'src
 import { DOCUMENT } from '@angular/common';
 import { shuffle, findIndex } from 'src/app/utils/array';
 import { NcPlayerPanelComponent } from './nc-player-panel/nc-player-panel.component';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { BatchActionsService } from 'src/app/store/batch-actions.service';
 import { Router } from '@angular/router';
 import { trigger, state, style, transition, animate, AnimationEvent } from '@angular/animations';
@@ -97,7 +97,8 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
     @Inject(DOCUMENT) private doc: Document,
     private nzModalServe: NzModalService,
     private batchActionsServe: BatchActionsService,
-    private router: Router
+    private router: Router,
+    private nzMessageServe: NzMessageService
   ) {
     const appStore$ = this.store$.pipe(select('player'));
 
@@ -323,7 +324,7 @@ export class NcPlayerComponent implements OnInit, AfterViewInit {
   }
 
   // 播放错误
-  onError() {
+  onError(t) {
     this.playing = false;
     this.bufferPercent = 0;
   }

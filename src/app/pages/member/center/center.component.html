@@ -2,7 +2,7 @@
   <div class="page-wrap">
     <div class="m-proifo clearfix">
       <div class="f-pr">
-        <img [src]="user.profile.avatarUrl"
+        <img appImgDefalut [src]="user.profile.avatarUrl"
              [alt]="user.profile.nickname" />
       </div>
       <div class="f-r">
@@ -41,7 +41,9 @@
                  [listenSongs]="user.listenSongs"
                  [currentIndex]="currentIndex"
                  (changeType)="onChangeType($event)"
-                 (addSong)="onAddSong($event)"></app-records>
+                 (addSong)="onAddSong($event)"
+                 (likeSong)="onLikeSong($event)"
+                 (shareSong)="onShareSong($event)"></app-records>
 
     <a class="look-more"
        [routerLink]="['/records', user.profile.userId]">查看更多&gt;</a>

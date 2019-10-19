@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { SearchResult, SongSheet } from './services/data-types/common.types';
 import { SearchService } from './services/search.service';
 import { isEmptyObject } from './utils/tools';
@@ -14,6 +14,11 @@ import { NzMessageService } from 'ng-zorro-antd';
 import { codeJson } from './utils/base64';
 import { StorageService } from './services/storage.service';
 import { getLikeId, getModalVisible, getModalType, getShareInfo } from './store/selectors/member.selector';
+import { Router, ActivatedRoute, NavigationEnd, NavigationStart } from '@angular/router';
+import { filter, map, mergeMap, takeUntil } from 'rxjs/internal/operators';
+import { Observable, interval } from 'rxjs';
+import { Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -47,13 +52,23 @@ export class AppComponent {
   // 分享信息
   shareInfo: ShareInfo;
 
+  routeTitle = '';
+
+  loadPercent = 0;
+
+  private navEnd: Observable<NavigationEnd>;
+
   constructor(
     private searchServe: SearchService,
     private store$: Store<AppStoreModule>,
     private batchActionsServe: BatchActionsService,
     private memberServe: MemberService,
     private messageServe: NzMessageService,
-    private storageServe: StorageService
+    private storageServe: StorageService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private titleServe: Title,
+    @Inject(DOCUMENT) private doc: Document
   ) {
     const userId = this.storageServe.getStorage('nc_userid');
     if (userId) {
@@ -65,6 +80,41 @@ export class AppComponent {
     this.ncRememberLogin = JSON.parse(ncRememberLogin);
 
     this.listenStates();
+
+    this.router.events.pipe(filter(evt => evt instanceof NavigationStart)).subscribe(() => {
+      this.loadPercent = 0;
+      this.setTitle();
+    });
+
+    this.navEnd = this.router.events.pipe(filter(evt => evt instanceof NavigationEnd)) as Observable<NavigationEnd>;
+    this.setLoadingBar();
+  }
+
+  private setLoadingBar() {
+    interval(100).pipe(takeUntil(this.navEnd)).subscribe(() => {
+      this.loadPercent = Math.max(95, ++this.loadPercent);
+    });
+    this.navEnd.subscribe(() => {
+      this.loadPercent = 100;
+      // 原生重置滚动条
+      // this.doc.documentElement.scrollTop = 0;
+    });
+  }
+
+  private setTitle() {
+    this.navEnd.pipe(
+      map(() => this.route),
+      map((route: ActivatedRoute) => {
+        while (route.firstChild) {
+          route = route.firstChild;
+        }
+        return route;
+      }),
+      mergeMap(route => route.data)
+    ).subscribe(data => {
+      this.routeTitle = data.title;
+      this.titleServe.setTitle(this.routeTitle);
+    });
   }
 
   private listenStates() {
@@ -187,8 +237,14 @@ export class AppComponent {
     });
   }
 
+  // 注册
+  onRegister(phone: string) {
+    this.alertMessage('success', phone + '注册成功');
+  }
+
   // 登录
   onLogin(params: LoginParams) {
+    this.showSpin = true;
     this.memberServe.login(params).subscribe(user => {
       this.user = user;
       this.batchActionsServe.controlModal(false);
@@ -206,7 +262,9 @@ export class AppComponent {
       } else {
         this.storageServe.removeStorage('nc_remember_login');
       }
+      this.showSpin = false;
     }, error => {
+      this.showSpin = false;
       this.alertMessage('error', error.message || '登录失败');
     });
   }
@@ -231,6 +289,14 @@ export class AppComponent {
   // 打开弹窗
   openModal(type: ModalTypes) {
     this.batchActionsServe.controlModal(true, type);
+  }
+
+  openModalByMenu(type: 'loginByPhone' | 'register') {
+    if (type === 'loginByPhone') {
+      this.openModal(ModalTypes.LoginByPhone);
+    } else {
+      this.openModal(ModalTypes.Register);
+    }
   }
 
   // g\关闭弹窗

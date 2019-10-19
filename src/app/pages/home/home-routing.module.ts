@@ -6,7 +6,7 @@ import { HomeResolverService } from './horm-resolve.service';
 
 const routes: Routes = [
   {
-    path: 'home', component: HomeComponent, data: { title: '首页' }, resolve: { homeDatas: HomeResolverService }
+    path: '', component: HomeComponent, data: { title: '首页' }, resolve: { homeDatas: HomeResolverService }
   }
 ];
 

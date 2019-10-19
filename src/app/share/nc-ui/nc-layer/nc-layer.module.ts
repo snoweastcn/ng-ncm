@@ -19,6 +19,7 @@ import { NcLayerLikeComponent } from './nc-layer-like/nc-layer-like.component';
 import { NcLayerShareComponent } from './nc-layer-share/nc-layer-share.component';
 import { NcLayerRegisterComponent } from './nc-layer-register/nc-layer-register.component';
 import { NcCheckCodeComponent } from './nc-check-code/nc-check-code.component';
+import { NcCodeComponent } from './nc-check-code/nc-code/nc-code.component';
 
 
 
@@ -30,7 +31,8 @@ import { NcCheckCodeComponent } from './nc-check-code/nc-check-code.component';
     NcLayerLikeComponent,
     NcLayerShareComponent,
     NcLayerRegisterComponent,
-    NcCheckCodeComponent
+    NcCheckCodeComponent,
+    NcCodeComponent
   ],
   imports: [
     CommonModule,

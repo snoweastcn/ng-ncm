@@ -7,7 +7,7 @@
           <h3 class="ellipsis">{{singerDetail.artist.alias.join(';')}}</h3>
         </div>
         <div class="cover-img">
-          <img class="full-height"
+          <img appImgDefalut class="full-height"
                [src]="singerDetail.artist.picUrl"
                [alt]="singerDetail.artist.name" />
         </div>
@@ -94,7 +94,7 @@
         <li *ngFor="let item of simiSingers"
             [routerLink]="['/singer', item.id]">
           <div class="pic">
-            <img [src]="item.picUrl"
+            <img appImgDefalut [src]="item.picUrl"
                  [alt]="item.name">
           </div>
           <p class="ellipsis">{{item.name}}</p>

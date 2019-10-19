@@ -10,6 +10,7 @@ import { SongService } from 'src/app/services/song.service';
 import { BatchActionsService } from 'src/app/store/batch-actions.service';
 import { NzMessageService } from 'ng-zorro-antd';
 import { getCurrentSong } from 'src/app/store/selectors/player.selector';
+import { SetShareInfo } from 'src/app/store/actions/member.action';
 
 @Component({
   selector: 'app-song-info',
@@ -84,7 +85,7 @@ export class SongInfoComponent implements OnInit, OnDestroy {
   // 分享
   onShareSong(resource: Song, type = 'song') {
     const txt = this.makeTxt('歌曲', resource.name, resource.ar);
-    // this.store$.dispatch(SetShareInfo({ info: { id: resource.id.toString(), type, txt } }));
+    this.store$.dispatch(SetShareInfo({ info: { id: resource.id.toString(), type, txt } }));
   }
 
   private makeTxt(type: string, name: string, makeBy: Singer[]): string {

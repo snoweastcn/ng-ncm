@@ -48,10 +48,10 @@
                (click)="addSong.emit([item.song, false])"></i>
             <i class="ico like"
                title="收藏"
-               (click)="onLikeSong.emit(item.song.id)"></i>
+               (click)="likeSong.emit(item.song.id)"></i>
             <i class="ico share"
                title="分享"
-               (click)="onShareSong.emit(item.song)"></i>
+               (click)="shareSong.emit(item.song)"></i>
           </p>
         </td>
         <td>

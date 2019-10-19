@@ -5,7 +5,7 @@
      cdkDragBoundary=".cdk-overlay-container">
   <div class="zbar"
        cdkDragHandle>
-    <div class="zttl f-thide">这是标题</div>
+    <div class="zttl f-thide">{{modalTitle[currentModalType]}}</div>
   </div>
 
   <ng-container [ngSwitch]="currentModalType">
@@ -22,12 +22,13 @@
       <ng-content select="[name=share]"></ng-content>
     </ng-container>
     <ng-container *ngSwitchDefault>
-      <ng-content select="[name=default]"></ng-content>
+      <ng-content></ng-content>
     </ng-container>
   </ng-container>
-
-  <ng-content></ng-content>
   <div class="zcls"
        title="关闭"
        (click)="hide()"></div>
+  <nz-spin nzTip="loading..."
+           class="spin"
+           *ngIf="showSpin"></nz-spin>
 </div>
