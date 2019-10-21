@@ -31,13 +31,13 @@ export class NcCheckCodeComponent implements OnInit, OnChanges {
 
   constructor() {
     this.formModel = new FormGroup({
-      code: new FormControl('', [Validators.required, Validators.pattern(/\d{4}/)])
+      code: new FormControl('', [Validators.required, Validators.minLength(4), Validators.pattern(/\d{4}/)])
     });
 
     const codeControl = this.formModel.get('code');
     codeControl.statusChanges.subscribe(status => {
       if (status === 'VALID') {
-        this.checkCode.emit(this.formModel.value.code);
+        this.checkCode.emit(this.formModel.get('code').value);
       }
     });
   }

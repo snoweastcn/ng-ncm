@@ -24,7 +24,8 @@
            (click)="onNext(currentIndex + 1)"></i>
       </div>
       <div class="head">
-        <img appImgDefalut [src]="picUrl"
+        <img appImgDefalut
+             [src]="picUrl"
              alt="">
         <i class="mask"
            (click)="toInfo(['/songInfo', currentSong && currentSong.id])"></i>
@@ -100,7 +101,7 @@
   </div>
 
   <audio #audio
-         [src]="currentSong?.url"
+         [src]="currentSong?.url || ''"
          (canplay)="onCanPlay()"
          (timeupdate)="onTimeUptate($event)"
          (ended)="onEnded()"
