@@ -99,7 +99,8 @@ export class NcCodeComponent implements OnInit, ControlValueAccessor, AfterViewI
   }
 
   ngOnDestroy(): void {
-    this.destory$.unsubscribe();
+    this.destory$.next();
+    this.destory$.complete();
   }
 
 }
